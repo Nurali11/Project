@@ -71,9 +71,44 @@ export class UserService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    name?: string;
+    phone?: string;
+    regionId?: number;
+    role?: 'ADMIN' | 'SUPER_ADMIN' | 'OWNER' | 'CASHER' | 'WAITER';
+    page?: number;
+    limit?: number;
+    sort?: 'asc' | 'desc';
+  }) {
     try {
-      const users = await this.prisma.user.findMany();
+      const {
+        name,
+        phone,
+        regionId,
+        role,
+        page = 1,
+        limit = 10,
+        sort = 'asc',
+      } = query;
+
+      const skip = (page - 1) * limit;
+
+      const users = await this.prisma.user.findMany({
+        where: {
+          name: name ? { contains: name, mode: 'insensitive' } : undefined,
+          phone: phone
+            ? { contains: phone, mode: 'insensitive' }
+            : undefined,
+          regionId: regionId ? String(regionId) : undefined,
+          role: role ? role : undefined,
+        },
+        orderBy: {
+          name: sort,
+        },
+        skip,
+        take: Number(limit),
+      });
+
       if (!users.length) return "Users aren't exists yet!";
       return users;
     } catch (error) {
