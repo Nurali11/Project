@@ -71,7 +71,7 @@ model Product {
   restaurantId String?
   Category     Category?   @relation(fields: [categoryId], references: [id])
   categoryId   String?
-  Orders       Order[]     @relation("OrderProduct")
+  OrderItem    OrderItem[]
   createdAt    DateTime    @default(now())
 }
 
@@ -80,9 +80,21 @@ model Order {
   table        String
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
-  Products     Product[]   @relation("OrderProduct")
   Debts        Debt[]
+  OrderItem    OrderItem[]
   createdAt    DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+
+  quantity  Int
+  createdAt DateTime @default(now())
 }
 
 enum WithdrawType { 

@@ -10,25 +10,34 @@ export class OrderService {
   ){}
   async create(data: CreateOrderDto) {
     try {
+      const { restaurantId, table, items } = data
+  
       const order = await this.prisma.order.create({
         data: {
-          restaurantId: data.restaurantId,
-          table: data.table,
-          ...(data.productIds?.length
-            ? {
-                Products: {
-                  connect: data.productIds.map(id => ({ id })),
-                },
-              }
-            : {}),
+          restaurantId,
+          table,
+          OrderItem: {
+            create: items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+            })),
+          },
         },
-      });
-      
+        include: {
+          OrderItem: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      })
+  
       return order
     } catch (error) {
       throw new BadRequestException(error.message)
     }
   }
+  
 
   async findAll() {
     try {
