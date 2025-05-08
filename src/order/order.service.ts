@@ -1,26 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OrderService {
-  create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+  constructor(
+    private prisma: PrismaService
+  ){}
+  async create(data: CreateOrderDto) {
+    try {
+      const order = await this.prisma.order.create({
+        data: {
+          restaurantId: data.restaurantId,
+          table: data.table,
+          ...(data.productIds?.length
+            ? {
+                Products: {
+                  connect: data.productIds.map(id => ({ id })),
+                },
+              }
+            : {}),
+        },
+      });
+      
+      return order
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll() {
+    try {
+      let all = await this.prisma.order.findMany()
+      return all
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number) {
+    try {
+      
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
+    try {
+      
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: number) {
+    try {
+      
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 }

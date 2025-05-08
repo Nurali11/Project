@@ -16,10 +16,11 @@ enum RoleType {
 }
 
 model Region {
-  id        String   @id @default(uuid())
-  name      String
-  user      User[]
-  createdAt DateTime @default(now())
+  id          String       @id @default(uuid())
+  name        String
+  user        User[]
+  restaurants Restaurant[]
+  createdAt   DateTime     @default(now())
 }
 
 model User {
@@ -47,6 +48,8 @@ model Restaurant {
   Withdraws  Withdraw[]
   Debts      Debt[]
   createdAt  DateTime   @default(now())
+  Region     Region?    @relation(fields: [regionId], references: [id])
+  regionId   String?
 }
 
 model Category {
@@ -82,7 +85,7 @@ model Order {
   createdAt    DateTime    @default(now())
 }
 
-enum WithdrawType {
+enum WithdrawType { 
   INCOME
   OUTCOME
 }
