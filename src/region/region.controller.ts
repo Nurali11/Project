@@ -26,7 +26,6 @@ export class RegionController {
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Region nomiga qarab filter',
   })
   @ApiQuery({
     name: 'sort',
@@ -37,13 +36,11 @@ export class RegionController {
     name: 'page',
     required: false,
     type: Number,
-    description: 'Sahifa raqami',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
     type: Number,
-    description: 'Har sahifada nechta element',
   })
   findAll(
     @Query('search') search?: string,
