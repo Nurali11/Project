@@ -12,3 +12,92 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum RoleType {
+  ADMIN
+  SUPER_ADMIN
+  OWNER
+  CASHER
+  WAITER
+}
+
+model Region {
+  id   String @id @default(uuid())
+  name String
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  phone    String
+  role     RoleType
+  password String
+  balans   Float    @default(0)
+}
+
+model Restaurant {
+  id         String     @id @default(uuid())
+  name       String
+  tip        Float
+  address    String
+  phone      String
+  isActive   Boolean
+  Products   Product[]
+  Categories Category[]
+  Orders     Order[]
+  Withdraws  Withdraw[]
+  Debts      Debt[]
+}
+
+model Category {
+  id           String      @id @default(uuid())
+  name         String
+  isActive     Boolean
+  Products     Product[]
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+}
+
+model Product {
+  id           String      @id @default(uuid())
+  name         String
+  price        Float
+  isActive     Boolean
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+  Category     Category?   @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+  Orders       Order[]     @relation("OrderProduct")
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  table        String
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+  Products     Product[]   @relation("OrderProduct")
+  Debts        Debt[]
+}
+
+enum WithdrawType {
+  INCOME
+  OUTCOME
+}
+
+model Withdraw {
+  id   String       @id @default(uuid())
+  type WithdrawType
+
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+}
+
+model Debt {
+  id       String @id @default(uuid())
+  username String
+
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+  Order        Order?      @relation(fields: [orderId], references: [id])
+  orderId      String?
+}
