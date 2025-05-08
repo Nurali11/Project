@@ -10,9 +10,17 @@ import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [UserModule, RestarauntModule, RegionModule, DebtModule, WithdrawModule, CategoryModule, OrderModule, ProductModule, PrismaModule],
+  imports: [UserModule, RestarauntModule, RegionModule, DebtModule, WithdrawModule, CategoryModule, OrderModule, ProductModule, PrismaModule,
+    JwtModule.register({
+      global: true,
+      secret: "sekret",
+      signOptions: { expiresIn: '60s' },
+    }),
+
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

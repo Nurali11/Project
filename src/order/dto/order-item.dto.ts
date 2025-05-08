@@ -1,10 +1,12 @@
-import { IsString, IsUUID, IsInt, Min } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsInt } from 'class-validator'
 
 export class OrderItemDto {
-  @IsUUID()
+@ApiProperty()
+  @IsInt()
   productId: string
 
+  @ApiProperty()
   @IsInt()
-  @Min(1)
   quantity: number
 }

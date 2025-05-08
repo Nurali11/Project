@@ -9,7 +9,6 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  @IsPhoneNumber()
   phone: string;
 
   @ApiProperty({ enum: RoleType })

@@ -2,41 +2,64 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Request } from 'express';
 
 @Injectable()
 export class OrderService {
   constructor(
     private prisma: PrismaService
   ){}
-  async create(data: CreateOrderDto) {
+  async create(data: CreateOrderDto, req: Request) {
     try {
-      const { restaurantId, table, items } = data
-  
+      let waiter = await this.prisma.user.findFirst({where: {id: req['user'].id}})
+      if(!waiter){
+        throw new BadRequestException("Waiter not found.")
+      }
+
+      let restaraunt = await this.prisma.restaurant.findFirst({where: {id: data.restaurantId}})
+      if(!restaraunt){
+        throw new BadRequestException(`Restaurant with ${data.restaurantId} id not found`)
+      }
+
+      let total = 0
+      for(let i of data.orderItems){
+        let prd= await this.prisma.product.findFirst({where: {id: i.productId}})
+        if(!prd){
+          throw new BadRequestException(`Product with ${i} id not found`)
+        }
+
+        total += prd.price * i.quantity
+      }
       const order = await this.prisma.order.create({
         data: {
-          restaurantId,
-          table,
+          table: data.table,
+          restaurantId: data.restaurantId,
           OrderItem: {
-            create: items.map((item) => ({
-              productId: item.productId,
+            create: data.orderItems.map((item) => ({
+              product: {
+                connect: { id: item.productId.toString() },
+              },
               quantity: item.quantity,
             })),
           },
         },
         include: {
-          OrderItem: {
-            include: {
-              product: true,
-            },
-          },
+          OrderItem: true,
         },
       })
-  
-      return order
+
+      let qoshishPul = await this.prisma.user.update({where: {id: req['user'].id}, data: {balans: waiter.balans + total/100*restaraunt.tip}})
+      
+      return {
+        order,
+        message: `$${total/100*restaraunt.tip} qoshildi waiterga. Waiter money - ${qoshishPul.balans}`
+      }
     } catch (error) {
       throw new BadRequestException(error.message)
     }
   }
+  
+  
   
 
   async findAll() {

@@ -10,6 +10,8 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean{
+    console.log("fer");
+    
     const req: Request = context.switchToHttp().getRequest();
 
     const token = req.headers.authorization?.split(' ')?.[1];
@@ -20,7 +22,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       
-      let data = this.jwt.verify(token)
+      let data = this.jwt.verify(token, {secret: "accessSecret"})
       req['user'] = {
         id: data['id'],
         role: data['role']

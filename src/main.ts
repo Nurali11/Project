@@ -9,6 +9,8 @@ async function bootstrap() {
     .setTitle('Restaraunt example')
     .setDescription('The Restaraunt description')
     .setVersion('1.0')
+    .addSecurityRequirements('bearer', ['bearer'])
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
