@@ -3,11 +3,13 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -71,14 +73,61 @@ export class UserService {
 
   async findAll() {
     try {
-      const user = await this.prisma.user.findMany();
-      if (!user) {
-        return "Users aren't exists yet!";
-      }
-      return user;
+      const users = await this.prisma.user.findMany();
+      if (!users.length) return "Users aren't exists yet!";
+      return users;
     } catch (error) {
       throw new HttpException(
         'Userlarni getAll qilishda xatolik yuz berdi',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findOne(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) throw new NotFoundException('User topilmadi!');
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        'Userni olishda xatolik yuz berdi',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async update(id: string, data: UpdateUserDto) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) throw new NotFoundException('User topilmadi!');
+
+      if (data.password) {
+        data.password = bcrypt.hashSync(data.password, 10);
+      }
+
+      return await this.prisma.user.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Userni update qilishda xatolik yuz berdi',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) throw new NotFoundException('User topilmadi!');
+
+      await this.prisma.user.delete({ where: { id } });
+      return { message: 'User muvaffaqiyatli o‘chirildi' };
+    } catch (error) {
+      throw new HttpException(
+        'Userni o‘chirishda xatolik yuz berdi',
         HttpStatus.BAD_REQUEST,
       );
     }
