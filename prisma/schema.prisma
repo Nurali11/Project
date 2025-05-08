@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,17 +16,22 @@ enum RoleType {
 }
 
 model Region {
-  id   String @id @default(uuid())
-  name String
+  id        String   @id @default(uuid())
+  name      String
+  user      User[]
+  createdAt DateTime @default(now())
 }
 
 model User {
-  id       String   @id @default(uuid())
-  name     String
-  phone    String
-  role     RoleType
-  password String
-  balans   Float    @default(0)
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  role      RoleType
+  password  String
+  balans    Float    @default(0)
+  Region    Region?  @relation(fields: [regionId], references: [id])
+  regionId  String?
+  createdAt DateTime @default(now())
 }
 
 model Restaurant {
@@ -47,6 +46,7 @@ model Restaurant {
   Orders     Order[]
   Withdraws  Withdraw[]
   Debts      Debt[]
+  createdAt  DateTime   @default(now())
 }
 
 model Category {
@@ -56,6 +56,7 @@ model Category {
   Products     Product[]
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
+  createdAt    DateTime    @default(now())
 }
 
 model Product {
@@ -68,6 +69,7 @@ model Product {
   Category     Category?   @relation(fields: [categoryId], references: [id])
   categoryId   String?
   Orders       Order[]     @relation("OrderProduct")
+  createdAt    DateTime    @default(now())
 }
 
 model Order {
@@ -77,6 +79,7 @@ model Order {
   restaurantId String?
   Products     Product[]   @relation("OrderProduct")
   Debts        Debt[]
+  createdAt    DateTime    @default(now())
 }
 
 enum WithdrawType {
@@ -90,6 +93,8 @@ model Withdraw {
 
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
+
+  createdAt DateTime @default(now())
 }
 
 model Debt {
@@ -100,4 +105,6 @@ model Debt {
   restaurantId String?
   Order        Order?      @relation(fields: [orderId], references: [id])
   orderId      String?
+
+  createdAt DateTime @default(now())
 }
