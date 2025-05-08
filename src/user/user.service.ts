@@ -96,14 +96,15 @@ export class UserService {
       const users = await this.prisma.user.findMany({
         where: {
           name: name ? { contains: name, mode: 'insensitive' } : undefined,
-          phone: phone
-            ? { contains: phone, mode: 'insensitive' }
-            : undefined,
+          phone: phone ? { contains: phone, mode: 'insensitive' } : undefined,
           regionId: regionId ? String(regionId) : undefined,
           role: role ? role : undefined,
         },
         orderBy: {
           name: sort,
+        },
+        include: {
+          Region: true,
         },
         skip,
         take: Number(limit),
