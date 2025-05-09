@@ -65,7 +65,7 @@ export class RestarauntService {
           createdAt: 'desc',
         },
         include: {
-          Region: true,
+          
         },
       });
       const total = restaurants.length;

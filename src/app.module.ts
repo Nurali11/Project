@@ -11,6 +11,7 @@ import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [UserModule, RestarauntModule, RegionModule, DebtModule, WithdrawModule, CategoryModule, OrderModule, ProductModule, PrismaModule,
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: "sekret",
       signOptions: { expiresIn: '60s' },
     }),
+    BotModule,
 
   ],
   controllers: [AppController],
