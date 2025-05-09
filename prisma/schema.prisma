@@ -17,7 +17,7 @@ enum RoleType {
 
 model Region {
   id         String       @id @default(uuid())
-  name       String
+  name       String       @unique
   user       User[]
   restaurant Restaurant[]
   createdAt  DateTime     @default(now())
@@ -25,7 +25,7 @@ model Region {
 
 model User {
   id        String   @id @default(uuid())
-  name      String
+  name      String   @unique
   phone     String
   role      RoleType
   password  String
@@ -37,7 +37,7 @@ model User {
 
 model Restaurant {
   id         String     @id @default(uuid())
-  name       String
+  name       String     @unique
   tip        Float
   address    String
   phone      String
@@ -55,7 +55,7 @@ model Restaurant {
 
 model Category {
   id           String      @id @default(uuid())
-  name         String
+  name         String      @unique
   isActive     Boolean
   Products     Product[]
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
