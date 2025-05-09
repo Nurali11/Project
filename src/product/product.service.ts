@@ -22,8 +22,9 @@ export class ProductService {
   async findAll(query: {
     name?: string;
     price?: number;
-    restaurantId?: number;
-    categoryId?: number;
+    isActive?: boolean;
+    restaurantId?: string;
+    categoryId?: string;
     sort?: 'asc' | 'desc';
     page?: number;
     limit?: number;
@@ -32,6 +33,7 @@ export class ProductService {
       const {
         name = '',
         price,
+        isActive,
         restaurantId,
         categoryId,
         sort = 'asc',
@@ -44,6 +46,7 @@ export class ProductService {
       };
 
       if (price !== undefined) where.price = price;
+      if (isActive !== undefined) where.isActive = isActive;
       if (restaurantId !== undefined) where.restaurantId = restaurantId;
       if (categoryId !== undefined) where.categoryId = categoryId;
 
@@ -52,7 +55,10 @@ export class ProductService {
         orderBy: { name: sort },
         skip: (page - 1) * limit,
         take: limit,
-        include: { Restaurant: true, Category: true },
+        include: {
+          Restaurant: true,
+          Category: true,
+        },
       });
 
       const total = await this.prisma.product.count({ where });
