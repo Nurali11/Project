@@ -63,7 +63,7 @@ export class OrderController {
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+    return this.orderService.findOne(id);
   }
 
   @Roles(RoleType.WAITER)
@@ -71,7 +71,7 @@ export class OrderController {
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
+    return this.orderService.update(id, updateOrderDto);
   }
 
   @Roles(RoleType.WAITER)
@@ -79,6 +79,6 @@ export class OrderController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+    return this.orderService.remove(id);
   }
 }

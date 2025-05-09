@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -100,6 +104,7 @@ export class OrderService {
           },
         },
         include: {
+          Restaurant: true,
           OrderItems: {
             include: {
               product: true,
@@ -121,22 +126,58 @@ export class OrderService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
+      const order = await this.prisma.order.findUnique({
+        where: { id },
+        include: {
+          Restaurant: true,
+          OrderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new NotFoundException(`Order with id ${id} not found`);
+      }
+
+      return order;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto) {
+  async update(id: string, updateOrderDto: UpdateOrderDto) {
     try {
+      const existing = await this.prisma.order.findUnique({ where: { id } });
+
+      if (!existing) {
+        throw new NotFoundException(`Order with id ${id} not found`);
+      }
+
+      return await this.prisma.order.update({
+        where: { id },
+        data: updateOrderDto,
+      });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
+      const existing = await this.prisma.order.findUnique({ where: { id } });
+
+      if (!existing) {
+        throw new NotFoundException(`Order with id ${id} not found`);
+      }
+
+      await this.prisma.order.delete({ where: { id } });
+
+      return { message: `Order with id ${id} removed successfully` };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -82,6 +82,9 @@ export class CategoryService {
     try {
       const category = await this.prisma.category.findUnique({
         where: { id },
+        include: {
+          Restaurant: true,
+        },
       });
 
       if (!category) {

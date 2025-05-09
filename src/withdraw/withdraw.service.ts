@@ -50,7 +50,10 @@ export class WithdrawService {
         data,
       });
 
-      await this.prisma.order.update({where: {id: data.orderId}, data: {status: "PAID"}})
+      await this.prisma.order.update({
+        where: { id: data.orderId },
+        data: { status: 'PAID' },
+      });
       return newWithdraw;
     } catch (error) {
       console.error(error);
@@ -88,6 +91,10 @@ export class WithdrawService {
         orderBy: { createdAt: sort },
         skip,
         take: limit,
+        include: {
+          Restaurant: true,
+          Order: true,
+        },
       });
 
       const total = await this.prisma.withdraw.count({ where });
@@ -109,6 +116,10 @@ export class WithdrawService {
     try {
       const withdraw = await this.prisma.withdraw.findUnique({
         where: { id },
+        include: {
+          Restaurant: true,
+          Order: true,
+        },
       });
       if (!withdraw) {
         throw new NotFoundException('Withdraw topilmadi');

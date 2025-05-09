@@ -81,6 +81,10 @@ export class DebtService {
         orderBy: sortByAmount ? { amount: sortByAmount } : undefined,
         skip: (page - 1) * limit,
         take: limit,
+        include: {
+          Order: true,
+          Restaurant: true,
+        },
       });
 
       const total = await this.prisma.debt.count({ where });
@@ -101,7 +105,13 @@ export class DebtService {
 
   async findOne(id: string) {
     try {
-      let one = await this.prisma.debt.findFirst({ where: { id } });
+      let one = await this.prisma.debt.findFirst({
+        where: { id },
+        include: {
+          Order: true,
+          Restaurant: true,
+        },
+      });
       return one;
     } catch (error) {
       throw new BadRequestException(error.message);
