@@ -50,6 +50,7 @@ export class WithdrawService {
         data,
       });
 
+      await this.prisma.order.update({where: {id: data.orderId}, data: {status: "PAID"}})
       return newWithdraw;
     } catch (error) {
       console.error(error);

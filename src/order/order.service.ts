@@ -40,6 +40,7 @@ export class OrderService {
         data: {
           table: data.table,
           restaurantId: data.restaurantId,
+          total: total,
           OrderItems: {
             create: data.orderItems.map((item) => ({
               product: {

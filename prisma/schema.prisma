@@ -40,7 +40,7 @@ model Restaurant {
   address    String
   phone      String
   isActive   Boolean
-  balance    Float @default(0)
+  balance    Float      @default(0)
   Products   Product[]
   Categories Category[]
   Orders     Order[]
@@ -72,9 +72,17 @@ model Product {
   createdAt    DateTime    @default(now())
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  DEBT
+}
+
 model Order {
   id           String      @id @default(uuid())
   table        String
+  total        Float
+  status       OrderStatus @default(PENDING)
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
   Debts        Debt[]
