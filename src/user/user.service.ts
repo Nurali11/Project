@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,6 +13,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RoleType } from '@prisma/client';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class UserService {
@@ -172,6 +174,40 @@ export class UserService {
         'Role ni ADMIN ga o‘zgartirishda xatolik yuz berdi',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async refreshAccessToken(data: RefreshTokenDto) {
+    try {
+      const payload = this.jwt.verify(data.refresh_token, {
+        secret: 'refreshSecret',
+      });
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.id },
+      });
+
+      if (!user || user.refreshToken !== data.refresh_token) {
+        throw new BadRequestException('Invalid refresh token');
+      }
+
+      const newAccessToken = this.jwt.sign(
+        { id: user.id, role: user.role },
+        {
+          secret: 'accessSecret',
+          expiresIn: '15m',
+        },
+      );
+
+      return {
+        message: 'New access token generated successfully ✅',
+        access_token: newAccessToken,
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to refresh access token');
     }
   }
 

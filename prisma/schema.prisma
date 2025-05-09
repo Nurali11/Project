@@ -24,15 +24,16 @@ model Region {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  phone     String
-  role      RoleType
-  password  String
-  balans    Float    @default(0)
-  Region    Region?  @relation(fields: [regionId], references: [id])
-  regionId  String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  name         String   @unique
+  phone        String
+  role         RoleType
+  password     String
+  balans       Float    @default(0)
+  refreshToken String?
+  Region       Region?  @relation(fields: [regionId], references: [id])
+  regionId     String?
+  createdAt    DateTime @default(now())
 }
 
 model Restaurant {

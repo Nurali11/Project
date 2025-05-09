@@ -117,7 +117,6 @@ export class OrderService {
         skip,
         take: limit,
       });
-
       return orders;
     } catch (error) {
       throw new BadRequestException(
