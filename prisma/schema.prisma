@@ -12,6 +12,7 @@ enum RoleType {
   SUPER_ADMIN
   CASHER
   WAITER
+  OWNER
 }
 
 model Region {

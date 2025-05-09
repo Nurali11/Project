@@ -7,16 +7,24 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiQuery } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RoleGuard } from 'src/role/role.guard';
+import { Roles } from 'src/user/decorators/roles.decorators';
+import { RoleType } from '@prisma/client';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @Roles(RoleType.OWNER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
@@ -56,6 +64,9 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
+  @Roles(RoleType.OWNER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -64,6 +75,9 @@ export class CategoryController {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
+  @Roles(RoleType.OWNER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.categoryService.remove(id);

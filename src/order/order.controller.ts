@@ -16,17 +16,23 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Request } from 'express';
 import { ApiQuery } from '@nestjs/swagger';
+import { RoleGuard } from 'src/role/role.guard';
+import { RoleType } from '@prisma/client';
+import { Roles } from 'src/user/decorators/roles.decorators';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Roles(RoleType.WAITER)
+  @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() createOrderDto: CreateOrderDto, @Req() req: Request) {
     return this.orderService.create(createOrderDto, req);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   @ApiQuery({ name: 'restaurantId', required: false })
   @ApiQuery({ name: 'productId', required: false })
@@ -52,16 +58,25 @@ export class OrderController {
     });
   }
 
+  @Roles(RoleType.WAITER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(+id);
   }
 
+  @Roles(RoleType.WAITER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(+id, updateOrderDto);
   }
 
+  @Roles(RoleType.WAITER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.orderService.remove(+id);

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "RoleType" AS ENUM ('ADMIN', 'SUPER_ADMIN', 'CASHER', 'WAITER');
+CREATE TYPE "RoleType" AS ENUM ('ADMIN', 'SUPER_ADMIN', 'CASHER', 'WAITER', 'OWNER');
 
 -- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'DEBT');

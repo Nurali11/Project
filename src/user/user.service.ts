@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RoleType } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -21,13 +22,13 @@ export class UserService {
 
   async register(data: CreateUserDto) {
     try {
-      const hash = bcrypt.hashSync(data.password, 10);
-
-      if (data.role === 'ADMIN') {
+      if (data.role === RoleType.ADMIN) {
         throw new BadRequestException(
           'Admin rolida foydalanuvchi yaratishga ruxsat yo‘q',
         );
       }
+
+      const hash = bcrypt.hashSync(data.password, 10);
 
       const user = await this.prisma.user.create({
         data: { ...data, password: hash },

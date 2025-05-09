@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common/pipes';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle('Restaraunt example')
+    .setTitle('Restaraunt ADMIN(name: "Dilshodbek", password: "string")')
     .setDescription('The Restaraunt description')
     .setVersion('1.0')
     .addSecurityRequirements('bearer', ['bearer'])

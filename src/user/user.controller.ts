@@ -8,17 +8,25 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiQuery } from '@nestjs/swagger';
+import { Roles } from './decorators/roles.decorators';
+import { RoleType } from '@prisma/client';
+import { RoleGuard } from 'src/role/role.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // @Roles(RoleType.ADMIN)
+  // @UseGuards(RoleGuard)
+  // @UseGuards(AuthGuard)
   @Post()
   create(@Body() data: CreateUserDto) {
     return this.userService.register(data);
@@ -67,16 +75,25 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: string, @Body() data: UpdateUserDto) {
     return this.userService.update(id, data);
   }
 
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Patch(':id/role')
   updateRoleToAdmin(@Param('id') id: string) {
     return this.userService.updateRoleToAdmin(id);
   }
 
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: string) {
     return this.userService.remove(id);
