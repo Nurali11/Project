@@ -1,12 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsInt } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsString, IsUUID } from 'class-validator';
 
 export class OrderItemDto {
-@ApiProperty()
-  @IsInt()
-  productId: string
+  @ApiProperty()
+  @IsString()
+  @IsUUID()
+  productId: string;
 
   @ApiProperty()
   @IsInt()
-  quantity: number
+  quantity: number;
 }

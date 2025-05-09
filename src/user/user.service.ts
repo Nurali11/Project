@@ -75,7 +75,7 @@ export class UserService {
     name?: string;
     phone?: string;
     regionId?: number;
-    role?: 'ADMIN' | 'SUPER_ADMIN' | 'OWNER' | 'CASHER' | 'WAITER';
+    role?: 'ADMIN' | 'SUPER_ADMIN' | 'CASHER' | 'WAITER';
     page?: number;
     limit?: number;
     sort?: 'asc' | 'desc';

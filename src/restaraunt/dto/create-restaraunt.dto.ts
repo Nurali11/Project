@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNumber, IsString, Length, Max, Min } from "class-validator"
+import { IsBoolean, IsNumber, IsPhoneNumber, IsString, Length, Max, Min } from "class-validator"
 
 export class CreateRestarauntDto {
     @ApiProperty()
@@ -23,11 +23,12 @@ export class CreateRestarauntDto {
     @ApiProperty({
         example: "+998901234567"
     })
-    @Length(13)
     @IsString()
+    @IsPhoneNumber()
     phone: string
     
     @ApiProperty()
+    @IsBoolean()
     isActive: boolean
 }
 

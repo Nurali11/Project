@@ -10,17 +10,15 @@ datasource db {
 enum RoleType {
   ADMIN
   SUPER_ADMIN
-  OWNER
   CASHER
   WAITER
 }
 
 model Region {
-  id          String       @id @default(uuid())
-  name        String
-  user        User[]
-  restaurants Restaurant[]
-  createdAt   DateTime     @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  user      User[]
+  createdAt DateTime @default(now())
 }
 
 model User {
@@ -42,14 +40,13 @@ model Restaurant {
   address    String
   phone      String
   isActive   Boolean
+  balance    Float      @default(0)
   Products   Product[]
   Categories Category[]
   Orders     Order[]
   Withdraws  Withdraw[]
   Debts      Debt[]
   createdAt  DateTime   @default(now())
-  Region     Region?    @relation(fields: [regionId], references: [id])
-  regionId   String?
 }
 
 model Category {
@@ -84,18 +81,19 @@ enum OrderStatus {
 model Order {
   id           String      @id @default(uuid())
   table        String
+  total        Float
+  status       OrderStatus @default(PENDING)
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
   Debts        Debt[]
-  OrderItem    OrderItem[]
+  Withdraws    Withdraw[]
+  OrderItems   OrderItem[] @relation("OrderToOrderItems")
   createdAt    DateTime    @default(now())
-  Withdraw     Withdraw[]
-  Status OrderStatus @default(PENDING)
 }
 
 model OrderItem {
   id      String @id @default(uuid())
-  order   Order  @relation(fields: [orderId], references: [id])
+  order   Order  @relation("OrderToOrderItems", fields: [orderId], references: [id])
   orderId String
 
   product   Product @relation(fields: [productId], references: [id])
@@ -112,12 +110,13 @@ enum WithdrawType {
 
 model Withdraw {
   id   String       @id @default(uuid())
-  type WithdrawType @default(INCOME)
+  type WithdrawType
 
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
-  Order      Order       @relation(fields: [orderId], references: [id])
-  orderId   String
+
+  Order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String?
 
   createdAt DateTime @default(now())
 }
@@ -125,11 +124,13 @@ model Withdraw {
 model Debt {
   id       String @id @default(uuid())
   username String
+  amount   Float
 
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
-  Order        Order?      @relation(fields: [orderId], references: [id])
-  orderId      String?
+
+  Order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String?
 
   createdAt DateTime @default(now())
 }

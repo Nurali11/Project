@@ -6,35 +6,42 @@ import { Request } from 'express';
 
 @Injectable()
 export class OrderService {
-  constructor(
-    private prisma: PrismaService
-  ){}
+  constructor(private prisma: PrismaService) {}
   async create(data: CreateOrderDto, req: Request) {
     try {
-      let waiter = await this.prisma.user.findFirst({where: {id: req['user'].id}})
-      if(!waiter){
-        throw new BadRequestException("Waiter not found.")
+      let waiter = await this.prisma.user.findFirst({
+        where: { id: req['user'].id },
+      });
+      if (!waiter) {
+        throw new BadRequestException('Waiter not found.');
       }
 
-      let restaraunt = await this.prisma.restaurant.findFirst({where: {id: data.restaurantId}})
-      if(!restaraunt){
-        throw new BadRequestException(`Restaurant with ${data.restaurantId} id not found`)
+      let restaraunt = await this.prisma.restaurant.findFirst({
+        where: { id: data.restaurantId },
+      });
+      if (!restaraunt) {
+        throw new BadRequestException(
+          `Restaurant with ${data.restaurantId} id not found`,
+        );
       }
 
-      let total = 0
-      for(let i of data.orderItems){
-        let prd= await this.prisma.product.findFirst({where: {id: i.productId}})
-        if(!prd){
-          throw new BadRequestException(`Product with ${i} id not found`)
+      let total = 0;
+      for (let i of data.orderItems) {
+        let prd = await this.prisma.product.findFirst({
+          where: { id: i.productId },
+        });
+        if (!prd) {
+          throw new BadRequestException(`Product with ${i} id not found`);
         }
 
-        total += prd.price * i.quantity
+        total += prd.price * i.quantity;
       }
       const order = await this.prisma.order.create({
         data: {
           table: data.table,
           restaurantId: data.restaurantId,
-          OrderItem: {
+          total: total,
+          OrderItems: {
             create: data.orderItems.map((item) => ({
               product: {
                 connect: { id: item.productId.toString() },
@@ -44,54 +51,94 @@ export class OrderService {
           },
         },
         include: {
-          OrderItem: true,
+          OrderItems: true,
         },
-      })
+      });
 
-      let qoshishPul = await this.prisma.user.update({where: {id: req['user'].id}, data: {balans: waiter.balans + total/100*restaraunt.tip}})
-      
+      let qoshishPul = await this.prisma.user.update({
+        where: { id: req['user'].id },
+        data: { balans: waiter.balans + (total / 100) * restaraunt.tip },
+      });
+
       return {
         order,
-        message: `$${total/100*restaraunt.tip} qoshildi waiterga. Waiter money - ${qoshishPul.balans}`
-      }
+        message: `$${(total / 100) * restaraunt.tip} qoshildi waiterga. Waiter money - ${qoshishPul.balans}`,
+      };
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
     }
   }
-  
-  
-  
 
-  async findAll() {
+  async findAll(query: {
+    restaurantId?: string;
+    productId?: string;
+    quantity?: number;
+    sort?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  }) {
+    const {
+      restaurantId,
+      productId,
+      quantity,
+      sort = 'desc',
+      page = 1,
+      limit = 10,
+    } = query;
+
     try {
-      let all = await this.prisma.order.findMany()
-      return all
+      const skip = (page - 1) * limit;
+
+      const orders = await this.prisma.order.findMany({
+        where: {
+          restaurantId: restaurantId || undefined,
+          OrderItems: {
+            some: {
+              productId: productId || undefined,
+              quantity: quantity ? quantity : undefined,
+            },
+          },
+        },
+        include: {
+          OrderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: sort,
+        },
+        skip,
+        take: limit,
+      });
+
+      return orders;
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(
+        'Buyurtmalarni olishda xatolik: ' + error.message,
+      );
     }
   }
 
   async findOne(id: number) {
     try {
-      
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
     }
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     try {
-      
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
     }
   }
 
   async remove(id: number) {
     try {
-      
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
     }
   }
 }
