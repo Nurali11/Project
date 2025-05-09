@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -32,7 +37,7 @@ export class RegionService {
         where: {
           name: {
             contains: search,
-            mode: 'insensitive', 
+            mode: 'insensitive',
           },
         },
         orderBy: {
@@ -61,10 +66,7 @@ export class RegionService {
         },
       };
     } catch (error) {
-      throw new HttpException(
-        'Regionlarni olishda xatolik',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BadRequestException('Regions not exists yet!');
     }
   }
 

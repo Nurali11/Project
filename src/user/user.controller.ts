@@ -26,7 +26,7 @@ export class UserController {
 
   // @Roles(RoleType.ADMIN)
   // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)  
   @Post()
   create(@Body() data: CreateUserDto) {
     return this.userService.register(data);

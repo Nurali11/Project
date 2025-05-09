@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsPhoneNumber,
   IsString,
+  IsUUID,
   Length,
   Max,
   Min,
@@ -34,4 +35,7 @@ export class CreateRestarauntDto {
   @IsString()
   @IsPhoneNumber()
   phone: string;
+
+  @IsBoolean()
+  isActive: boolean;
 }

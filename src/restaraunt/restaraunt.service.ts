@@ -80,7 +80,7 @@ export class RestarauntService {
         },
       };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException('Restaraunt not exists yet');
     }
   }
 
