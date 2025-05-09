@@ -200,7 +200,6 @@ export class UserService {
       );
 
       return {
-        message: 'New access token generated successfully ✅',
         access_token: newAccessToken,
       };
     } catch (error) {
