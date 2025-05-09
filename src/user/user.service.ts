@@ -120,10 +120,7 @@ export class UserService {
       if (!users.length) return "Users aren't exists yet!";
       return users;
     } catch (error) {
-      throw new HttpException(
-        'Userlarni getAll qilishda xatolik yuz berdi',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Users are not exists!');
     }
   }
 

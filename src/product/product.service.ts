@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -73,10 +78,7 @@ export class ProductService {
         },
       };
     } catch (error) {
-      throw new HttpException(
-        'Mahsulotlarni olishda xatolik',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BadRequestException('Product olishda xatolik!');
     }
   }
 
@@ -93,10 +95,7 @@ export class ProductService {
         throw new HttpException('Mahsulot topilmadi', HttpStatus.NOT_FOUND);
       return product;
     } catch (error) {
-      throw new HttpException(
-        'Mahsulotni olishda xatolik',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BadRequestException('Products are not exists yet!');
     }
   }
 
