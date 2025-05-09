@@ -68,12 +68,55 @@ export class OrderService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    restaurantId?: string;
+    productId?: string;
+    quantity?: number;
+    sort?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  }) {
+    const {
+      restaurantId,
+      productId,
+      quantity,
+      sort = 'desc',
+      page = 1,
+      limit = 10,
+    } = query;
+
     try {
-      let all = await this.prisma.order.findMany();
-      return all;
+      const skip = (page - 1) * limit;
+
+      const orders = await this.prisma.order.findMany({
+        where: {
+          restaurantId: restaurantId || undefined,
+          OrderItems: {
+            some: {
+              productId: productId || undefined,
+              quantity: quantity ? quantity : undefined,
+            },
+          },
+        },
+        include: {
+          OrderItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: sort,
+        },
+        skip,
+        take: limit,
+      });
+
+      return orders;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(
+        'Buyurtmalarni olishda xatolik: ' + error.message,
+      );
     }
   }
 

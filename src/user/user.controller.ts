@@ -36,7 +36,7 @@ export class UserController {
   @ApiQuery({
     name: 'role',
     required: false,
-    enum: ['ADMIN', 'SUPER_ADMIN', 'OWNER', 'CASHER', 'WAITER'],
+    enum: ['ADMIN', 'SUPER_ADMIN', 'CASHER', 'WAITER'],
   })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -46,7 +46,7 @@ export class UserController {
     @Query('phoneNumber') phone?: string,
     @Query('regionId') regionId?: number,
     @Query('role')
-    role?: 'ADMIN' | 'SUPER_ADMIN' | 'OWNER' | 'CASHER' | 'WAITER',
+    role?: 'ADMIN' | 'SUPER_ADMIN' | 'CASHER' | 'WAITER',
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('sort') sort?: 'asc' | 'desc',
