@@ -15,10 +15,11 @@ enum RoleType {
 }
 
 model Region {
-  id        String   @id @default(uuid())
-  name      String
-  user      User[]
-  createdAt DateTime @default(now())
+  id         String       @id @default(uuid())
+  name       String
+  user       User[]
+  restaurant Restaurant[]
+  createdAt  DateTime     @default(now())
 }
 
 model User {
@@ -39,7 +40,7 @@ model Restaurant {
   tip        Float
   address    String
   phone      String
-  isActive   Boolean
+  isActive   Boolean    @default(true)
   balance    Float      @default(0)
   Products   Product[]
   Categories Category[]
@@ -47,6 +48,8 @@ model Restaurant {
   Withdraws  Withdraw[]
   Debts      Debt[]
   createdAt  DateTime   @default(now())
+  Region     Region?    @relation(fields: [regionId], references: [id])
+  regionId   String?
 }
 
 model Category {
@@ -81,7 +84,7 @@ enum OrderStatus {
 model Order {
   id           String      @id @default(uuid())
   table        String
-  total        Float
+  total        Float       @default(0)
   status       OrderStatus @default(PENDING)
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?

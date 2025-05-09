@@ -72,6 +72,11 @@ export class UserController {
     return this.userService.update(id, data);
   }
 
+  @Patch(':id/role')
+  updateRoleToAdmin(@Param('id') id: string) {
+    return this.userService.updateRoleToAdmin(id);
+  }
+
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: string) {
     return this.userService.remove(id);

@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "RoleType" AS ENUM ('ADMIN', 'SUPER_ADMIN', 'OWNER', 'CASHER', 'WAITER');
+CREATE TYPE "RoleType" AS ENUM ('ADMIN', 'SUPER_ADMIN', 'CASHER', 'WAITER');
+
+-- CreateEnum
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'DEBT');
 
 -- CreateEnum
 CREATE TYPE "WithdrawType" AS ENUM ('INCOME', 'OUTCOME');
@@ -34,7 +37,8 @@ CREATE TABLE "Restaurant" (
     "tip" DOUBLE PRECISION NOT NULL,
     "address" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "balance" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "regionId" TEXT,
 
@@ -69,6 +73,8 @@ CREATE TABLE "Product" (
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "table" TEXT NOT NULL,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "restaurantId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -91,6 +97,7 @@ CREATE TABLE "Withdraw" (
     "id" TEXT NOT NULL,
     "type" "WithdrawType" NOT NULL,
     "restaurantId" TEXT,
+    "orderId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Withdraw_pkey" PRIMARY KEY ("id")
@@ -100,6 +107,7 @@ CREATE TABLE "Withdraw" (
 CREATE TABLE "Debt" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
     "restaurantId" TEXT,
     "orderId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -133,6 +141,9 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Withdraw" ADD CONSTRAINT "Withdraw_restaurantId_fkey" FOREIGN KEY ("restaurantId") REFERENCES "Restaurant"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Withdraw" ADD CONSTRAINT "Withdraw_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Debt" ADD CONSTRAINT "Debt_restaurantId_fkey" FOREIGN KEY ("restaurantId") REFERENCES "Restaurant"("id") ON DELETE SET NULL ON UPDATE CASCADE;

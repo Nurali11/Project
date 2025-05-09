@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { DebtService } from './debt.service';
 import { CreateDebtDto } from './dto/create-debt.dto';
 import { UpdateDebtDto } from './dto/update-debt.dto';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('debt')
 export class DebtController {
@@ -13,8 +23,16 @@ export class DebtController {
   }
 
   @Get()
-  findAll() {
-    return this.debtService.findAll();
+  @ApiQuery({ name: 'orderId', required: false, type: String })
+  @ApiQuery({ name: 'restaurantId', required: false, type: String })
+  @ApiQuery({ name: 'client', required: false, type: String })
+  @ApiQuery({ name: 'minAmount', required: false, type: Number })
+  @ApiQuery({ name: 'maxAmount', required: false, type: Number })
+  @ApiQuery({ name: 'sortByAmount', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  findAll(@Query() query: any) {
+    return this.debtService.findAll(query);
   }
 
   @Get(':id')

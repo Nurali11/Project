@@ -23,6 +23,12 @@ export class UserService {
     try {
       const hash = bcrypt.hashSync(data.password, 10);
 
+      if (data.role === 'ADMIN') {
+        throw new BadRequestException(
+          'Admin rolida foydalanuvchi yaratishga ruxsat yo‘q',
+        );
+      }
+
       const user = await this.prisma.user.create({
         data: { ...data, password: hash },
       });
@@ -149,6 +155,23 @@ export class UserService {
     } catch (error) {
       throw new HttpException(
         'Userni update qilishda xatolik yuz berdi',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async updateRoleToAdmin(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) throw new NotFoundException('User topilmadi!');
+
+      return await this.prisma.user.update({
+        where: { id },
+        data: { role: 'ADMIN' },
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Role ni ADMIN ga o‘zgartirishda xatolik yuz berdi',
         HttpStatus.BAD_REQUEST,
       );
     }
