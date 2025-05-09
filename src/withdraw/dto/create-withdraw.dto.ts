@@ -1,1 +1,5 @@
-export class CreateWithdrawDto {}
+export class CreateWithdrawDto {
+    orderId: string
+    restaurantId: string
+    amount: number
+}

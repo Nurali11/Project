@@ -4,8 +4,12 @@ import { UpdateWithdrawDto } from './dto/update-withdraw.dto';
 
 @Injectable()
 export class WithdrawService {
-  create(createWithdrawDto: CreateWithdrawDto) {
-    return 'This action adds a new withdraw';
+  create(data: CreateWithdrawDto) {
+    try {
+      
+    } catch (error) {
+      
+    }
   }
 
   findAll() {

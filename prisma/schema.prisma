@@ -75,6 +75,12 @@ model Product {
   createdAt    DateTime    @default(now())
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  DEBT
+}
+
 model Order {
   id           String      @id @default(uuid())
   table        String
@@ -83,31 +89,35 @@ model Order {
   Debts        Debt[]
   OrderItem    OrderItem[]
   createdAt    DateTime    @default(now())
+  Withdraw     Withdraw[]
+  Status OrderStatus @default(PENDING)
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String
+  id      String @id @default(uuid())
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
 
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   productId String
 
   quantity  Int
   createdAt DateTime @default(now())
 }
 
-enum WithdrawType { 
+enum WithdrawType {
   INCOME
   OUTCOME
 }
 
 model Withdraw {
   id   String       @id @default(uuid())
-  type WithdrawType
+  type WithdrawType @default(INCOME)
 
   Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
+  Order      Order       @relation(fields: [orderId], references: [id])
+  orderId   String
 
   createdAt DateTime @default(now())
 }
