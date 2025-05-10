@@ -21,12 +21,15 @@ export class TgMessage {
       const restaurants = await this.prisma.restaurant.findMany();
 
       const keyboard = Markup.keyboard(
-        restaurants.map(restaurant => [restaurant.name])
+        restaurants.map((restaurant) => [restaurant.name]),
       )
         .resize()
         .oneTime();
 
-      await ctx.reply(`Hush kelibsiz ${ctx.from?.first_name}🤗\nQaysi Restoran haqida malumot kerak?:`, keyboard);
+      await ctx.reply(
+        `Hush kelibsiz ${ctx.from?.first_name}🤗\nQaysi Restoran haqida malumot kerak?:`,
+        keyboard,
+      );
     } catch (error) {
       await ctx.reply(error.message);
     }
@@ -36,29 +39,27 @@ export class TgMessage {
   async onMessage(ctx: MyContext) {
     try {
       if (!ctx.message || !('text' in ctx.message)) return;
-      
+
       const text = ctx.message.text;
-       
+
       if (!ctx.session) {
         ctx.session = {};
       }
 
       const restaurant = await this.prisma.restaurant.findFirst({
-        where: { name: text }
+        where: { name: text },
       });
 
       if (restaurant) {
         ctx.session.selectedRestaurantId = restaurant.id;
-        
-        const actionKeyboard = Markup.keyboard([
-          ['Order', 'Workers', 'Info']
-        ])
+
+        const actionKeyboard = Markup.keyboard([['Order', 'Workers', 'Info']])
           .resize()
           .oneTime();
 
         await ctx.reply(
           `Rayhon restorani tanlandi: ${text}\nQanday malumot kerak?`,
-          actionKeyboard
+          actionKeyboard,
         );
         return;
       }
@@ -77,7 +78,6 @@ export class TgMessage {
         await this.handleInfo(ctx);
         return;
       }
-
     } catch (error) {
       await ctx.reply(error.message);
     }
@@ -89,7 +89,7 @@ export class TgMessage {
         const restaurants = await this.prisma.restaurant.findMany();
 
         const keyboard = Markup.keyboard(
-          restaurants.map(restaurant => [restaurant.name])
+          restaurants.map((restaurant) => [restaurant.name]),
         )
           .resize()
           .oneTime();
@@ -104,13 +104,13 @@ export class TgMessage {
           Restaurant: true,
           OrderItems: {
             include: {
-              product: true
-            }
-          }
+              product: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       });
 
       if (orders.length === 0) {
@@ -136,9 +136,7 @@ export class TgMessage {
         await ctx.reply(message);
       }
 
-      const actionKeyboard = Markup.keyboard([
-        ['Order', 'Workers', 'Info']
-      ])
+      const actionKeyboard = Markup.keyboard([['Order', 'Workers', 'Info']])
         .resize()
         .oneTime();
 
@@ -154,7 +152,7 @@ export class TgMessage {
         const restaurants = await this.prisma.restaurant.findMany();
 
         const keyboard = Markup.keyboard(
-          restaurants.map(restaurant => [restaurant.name])
+          restaurants.map((restaurant) => [restaurant.name]),
         )
           .resize()
           .oneTime();
@@ -166,11 +164,11 @@ export class TgMessage {
       const workers = await this.prisma.user.findMany({
         where: { restaurantId: ctx.session.selectedRestaurantId },
         include: {
-          Region: true
+          Region: true,
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       });
 
       if (workers.length === 0) {
@@ -189,9 +187,7 @@ export class TgMessage {
         await ctx.reply(message);
       }
 
-      const actionKeyboard = Markup.keyboard([
-        ['Order', 'Workers', 'Info']
-      ])
+      const actionKeyboard = Markup.keyboard([['Order', 'Workers', 'Info']])
         .resize()
         .oneTime();
 
@@ -207,7 +203,7 @@ export class TgMessage {
         const restaurants = await this.prisma.restaurant.findMany();
 
         const keyboard = Markup.keyboard(
-          restaurants.map(restaurant => [restaurant.name])
+          restaurants.map((restaurant) => [restaurant.name]),
         )
           .resize()
           .oneTime();
@@ -224,8 +220,8 @@ export class TgMessage {
           Orders: true,
           Categories: true,
           Withdraws: true,
-          Debts: true
-        }
+          Debts: true,
+        },
       });
 
       if (!restaurant) {
@@ -241,12 +237,12 @@ export class TgMessage {
       message += `📅 Ochilgan sana: ${new Date(restaurant.createdAt).toLocaleString()}\n\n`;
 
       message += `🍽️ Taomlar (${restaurant.Products.length} ta):\n`;
-      restaurant.Products.forEach(product => {
+      restaurant.Products.forEach((product) => {
         message += `- ${product.name}: ${product.price} сум\n`;
       });
 
       message += `\n👥 Xodimlar (${restaurant.Users.length} ta):\n`;
-      restaurant.Users.forEach(user => {
+      restaurant.Users.forEach((user) => {
         message += `- ${user.name} (${user.role})\n`;
       });
 
@@ -254,15 +250,13 @@ export class TgMessage {
       message += `- Jami summa: ${restaurant.Orders.reduce((sum, order) => sum + order.total, 0)} сум\n`;
 
       message += `\n📂 Kategoriyalar (${restaurant.Categories.length} ta):\n`;
-      restaurant.Categories.forEach(category => {
+      restaurant.Categories.forEach((category) => {
         message += `- ${category.name}\n`;
       });
 
       await ctx.reply(message);
 
-      const actionKeyboard = Markup.keyboard([
-        ['Order', 'Workers', 'Info']
-      ])
+      const actionKeyboard = Markup.keyboard([['Order', 'Workers', 'Info']])
         .resize()
         .oneTime();
 
