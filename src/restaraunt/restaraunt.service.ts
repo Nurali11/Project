@@ -65,7 +65,12 @@ export class RestarauntService {
           createdAt: 'desc',
         },
         include: {
-          
+          Products: true,
+          Users: true,
+          Orders: true,
+          Categories: true,
+          Withdraws: true,
+          Debts: true,
         },
       });
       const total = restaurants.length;
@@ -80,13 +85,20 @@ export class RestarauntService {
         },
       };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException('Restaraunt not exists yet');
     }
   }
 
   async findOne(id: string) {
     try {
-      let one = await this.prisma.restaurant.findFirst({ where: { id } });
+      let one = await this.prisma.restaurant.findFirst({ where: { id } , include: {
+          Products: true,
+          Users: true,
+          Orders: true,
+          Categories: true,
+          Withdraws: true,
+          Debts: true
+        }});
       return one;
     } catch (error) {
       throw new BadRequestException(error.message);

@@ -13,7 +13,7 @@ export class CategoryService {
       return category;
     } catch (error) {
       throw new HttpException(
-        'Category yaratishda xatolik yuz berdi',
+        error.message,
         HttpStatus.BAD_REQUEST,
       );
     }

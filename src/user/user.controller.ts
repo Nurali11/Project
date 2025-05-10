@@ -26,7 +26,7 @@ export class UserController {
 
   // @Roles(RoleType.ADMIN)
   // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)  
   @Post()
   create(@Body() data: CreateUserDto) {
     return this.userService.register(data);
@@ -39,6 +39,7 @@ export class UserController {
 
   @Get()
   @ApiQuery({ name: 'name', required: false })
+  @ApiQuery({ name: 'restaurantId', required: false })
   @ApiQuery({ name: 'phoneNumber', required: false })
   @ApiQuery({ name: 'regionId', required: false, type: Number })
   @ApiQuery({
@@ -52,6 +53,7 @@ export class UserController {
   getAll(
     @Query('name') name?: string,
     @Query('phoneNumber') phone?: string,
+    @Query('restaurantId') restaurantId?: string,
     @Query('regionId') regionId?: number,
     @Query('role')
     role?: 'ADMIN' | 'SUPER_ADMIN' | 'CASHER' | 'WAITER',
@@ -62,7 +64,8 @@ export class UserController {
     return this.userService.findAll({
       name,
       phone,
-      regionId: regionId ? Number(regionId) : undefined,
+      restaurantId,
+      regionId: regionId ? String(regionId) : undefined,
       role,
       page,
       limit,
@@ -71,15 +74,15 @@ export class UserController {
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: string) {
+  getOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
-  @Roles(RoleType.ADMIN)
-  @UseGuards(RoleGuard)
-  @UseGuards(AuthGuard)
+  // @Roles(RoleType.ADMIN)
+  // @UseGuards(RoleGuard)
+  // @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() data: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() data: UpdateUserDto) {
     return this.userService.update(id, data);
   }
 
@@ -95,7 +98,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 }

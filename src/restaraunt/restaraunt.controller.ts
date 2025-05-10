@@ -22,8 +22,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class RestarauntController {
   constructor(private readonly restarauntService: RestarauntService) {}
 
-  @Roles(RoleType.ADMIN)
-  @UseGuards(RoleGuard)
+  // @Roles(RoleType.ADMIN)
+  // @UseGuards(RoleGuard)
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() createRestarauntDto: CreateRestarauntDto) {

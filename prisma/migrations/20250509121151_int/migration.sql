@@ -115,6 +115,18 @@ CREATE TABLE "Debt" (
     CONSTRAINT "Debt_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Region_name_key" ON "Region"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Restaurant_name_key" ON "Restaurant"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_regionId_fkey" FOREIGN KEY ("regionId") REFERENCES "Region"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 

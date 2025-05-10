@@ -8,6 +8,10 @@ export class CreateUserDto {
   name: string;
 
   @ApiProperty()
+  @IsUUID()
+  restaurantId: string
+
+  @ApiProperty()
   @IsString()
   phone: string;
 

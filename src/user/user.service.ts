@@ -36,7 +36,7 @@ export class UserService {
       return user;
     } catch (error) {
       throw new HttpException(
-        'User yaratishda xatolik yuz berdi',
+        error.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -81,7 +81,8 @@ export class UserService {
   async findAll(query: {
     name?: string;
     phone?: string;
-    regionId?: number;
+    restaurantId?: string;
+    regionId?: string;
     role?: 'ADMIN' | 'SUPER_ADMIN' | 'CASHER' | 'WAITER';
     page?: number;
     limit?: number;
@@ -90,6 +91,7 @@ export class UserService {
     try {
       const {
         name,
+        restaurantId,
         phone,
         regionId,
         role,
@@ -104,6 +106,7 @@ export class UserService {
         where: {
           name: name ? { contains: name, mode: 'insensitive' } : undefined,
           phone: phone ? { contains: phone, mode: 'insensitive' } : undefined,
+          restaurantId : restaurantId?  restaurantId :  undefined,
           regionId: regionId ? String(regionId) : undefined,
           role: role ? role : undefined,
         },
@@ -121,7 +124,7 @@ export class UserService {
       return users;
     } catch (error) {
       throw new HttpException(
-        'Userlarni getAll qilishda xatolik yuz berdi',
+        error.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -142,7 +145,7 @@ export class UserService {
 
   async update(id: string, data: UpdateUserDto) {
     try {
-      const user = await this.prisma.user.findUnique({ where: { id } });
+      const user = await this.prisma.user.findFirst({ where: { id } });
       if (!user) throw new NotFoundException('User topilmadi!');
 
       if (data.password) {
@@ -155,7 +158,7 @@ export class UserService {
       });
     } catch (error) {
       throw new HttpException(
-        'Userni update qilishda xatolik yuz berdi',
+        error.message,
         HttpStatus.BAD_REQUEST,
       );
     }
