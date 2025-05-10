@@ -61,7 +61,7 @@ export class UserService {
 
       const access_token = this.jwt.sign(payload, {
         secret: 'accessSecret',
-        expiresIn: '15m',
+        expiresIn: '1d',
       });
 
       const refresh_token = this.jwt.sign(payload, {

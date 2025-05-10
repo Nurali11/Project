@@ -29,7 +29,6 @@ model User {
   phone    String
   role     RoleType
   password String
-
   balans       Float       @default(0)
   Region       Region?     @relation(fields: [regionId], references: [id])
   regionId     String?

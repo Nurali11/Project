@@ -108,7 +108,7 @@ export class WithdrawService {
       };
     } catch (error) {
       console.error(error);
-      throw new BadRequestException('Withdrawlar ro‘yxatini olishda xatolik');
+      throw new BadRequestException('Withdraws are not exists yet!');
     }
   }
 

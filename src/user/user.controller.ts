@@ -19,14 +19,15 @@ import { Roles } from './decorators/roles.decorators';
 import { RoleType } from '@prisma/client';
 import { RoleGuard } from 'src/role/role.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Roles(RoleType.ADMIN)
-  // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)  
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() data: CreateUserDto) {
     return this.userService.register(data);
@@ -78,9 +79,9 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  // @Roles(RoleType.ADMIN)
-  // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() data: UpdateUserDto) {
     return this.userService.update(id, data);

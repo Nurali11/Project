@@ -22,9 +22,9 @@ import { RoleType } from '@prisma/client';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  // @Roles(RoleType.OWNER)
-  // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  @Roles(RoleType.OWNER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);

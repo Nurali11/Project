@@ -32,7 +32,7 @@ export class OrderController {
     return this.orderService.create(createOrderDto, req);
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Get()
   @ApiQuery({ name: 'restaurantId', required: false })
   @ApiQuery({ name: 'productId', required: false })
@@ -58,9 +58,9 @@ export class OrderController {
     });
   }
 
-  // @Roles(RoleType.WAITER)
-  // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  @Roles(RoleType.WAITER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);

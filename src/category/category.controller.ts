@@ -22,9 +22,9 @@ import { RoleType } from '@prisma/client';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  // @Roles(RoleType.OWNER)
-  // @UseGuards(RoleGuard)
-  // @UseGuards(AuthGuard)
+  @Roles(RoleType.OWNER)
+  @UseGuards(RoleGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
